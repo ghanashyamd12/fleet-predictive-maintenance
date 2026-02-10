@@ -57,12 +57,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 # 4. Train FAST + VALID model
 # =========================
 
-model = RandomForestRegressor(
-    n_estimators=40,   # balanced accuracy + speed
-    max_depth=8,
-    random_state=42,
-    n_jobs=1
-)
+from sklearn.linear_model import Ridge
+
+model = Ridge(alpha=1.0)
+model.fit(X_train, y_train)
+
 
 model.fit(X_train, y_train)
 
