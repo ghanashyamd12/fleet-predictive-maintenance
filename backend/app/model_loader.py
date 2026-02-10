@@ -1,16 +1,16 @@
 import joblib
 import os
 
-MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "../../ml/model/rul_model.pkl"
-)
-
 
 def load_model_and_scaler():
-    data = joblib.load(MODEL_PATH)
+    # ✅ Always load the NEW trained model
+    MODEL_PATH = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../../ml/model/rul_model.pkl")
+    )
 
-    model = data["model"]
-    scaler = data["scaler"]
+    bundle = joblib.load(MODEL_PATH)
+
+    model = bundle["model"]
+    scaler = bundle["scaler"]
 
     return model, scaler
