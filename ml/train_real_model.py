@@ -6,7 +6,6 @@ import os
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from sklearn.preprocessing import StandardScaler
 
 # =========================
 # 1. Load NASA turbofan dataset
@@ -34,9 +33,8 @@ max_cycles.columns = ["unit", "max_cycle"]
 df = df.merge(max_cycles, on="unit")
 df["RUL"] = df["max_cycle"] - df["cycle"]
 
-# ---- NASA standard: clip RUL ----
-RUL_CLIP = 130
-df["RUL"] = df["RUL"].clip(upper=RUL_CLIP)
+# Clip RUL to NASA standard
+df["RUL"] = df["RUL"].clip(upper=130)
 
 # =========================
 # 3. Prepare features
@@ -45,23 +43,20 @@ df["RUL"] = df["RUL"].clip(upper=RUL_CLIP)
 X = df[[f"sensor_{i}" for i in range(1, 22)]]
 y = df["RUL"]
 
-# ---- Feature scaling ----
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
 X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y, test_size=0.2, random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
 # =========================
-# 4. Train FAST + VALID model
+# 4. Train INDUSTRY model
 # =========================
 
-from sklearn.linear_model import Ridge
-
-model = Ridge(alpha=1.0)
-model.fit(X_train, y_train)
-
+model = RandomForestRegressor(
+    n_estimators=120,
+    max_depth=12,
+    random_state=42,
+    n_jobs=-1
+)
 
 model.fit(X_train, y_train)
 
@@ -78,15 +73,11 @@ print("RMSE:", round(rmse, 2))
 print("MAE :", round(mae, 2))
 
 # =========================
-# 6. Save model + scaler
+# 6. Save FINAL model
 # =========================
 
 os.makedirs("ml/model", exist_ok=True)
 
-joblib.dump(
-    {"model": model, "scaler": scaler},
-    "ml/model/rul_model.pkl",
-    compress=3,
-)
+joblib.dump(model, "ml/model/rul_model.pkl")
 
-print("✅ FINAL industry model saved.")
+print("✅ FINAL INDUSTRY MODEL SAVED")
