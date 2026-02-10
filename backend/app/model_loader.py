@@ -1,13 +1,16 @@
 import joblib
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "../../ml/model/rul_model.pkl"
+)
 
-MODEL_PATH = os.path.join(BASE_DIR, "ml", "model", "rul_model.pkl")
-SCALER_PATH = os.path.join(BASE_DIR, "ml", "model", "scaler.pkl")
 
+def load_model_and_scaler():
+    data = joblib.load(MODEL_PATH)
 
-def load_model():
-    model = joblib.load(MODEL_PATH)
-    scaler = joblib.load(SCALER_PATH)
+    model = data["model"]
+    scaler = data["scaler"]
+
     return model, scaler

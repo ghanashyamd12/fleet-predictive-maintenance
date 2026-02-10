@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 
-from .model_loader import load_model
+
 
 app = FastAPI(title="Fleet Predictive Maintenance API")
 
@@ -16,7 +16,10 @@ app.add_middleware(
     allow_headers=["*"],   # ← VERY IMPORTANT
 )
 
-model, scaler = load_model()
+from .model_loader import load_model_and_scaler
+
+model, scaler = load_model_and_scaler()
+
 
 
 
