@@ -36,13 +36,13 @@ def root():
 def predict(data: SensorInput):
     import numpy as np
 
-    # Convert input to numpy array
     sensors_array = np.array(data.sensors).reshape(1, -1)
 
-    # 🔹 Apply scaler before prediction
-    scaled_input = scaler.transform(sensors_array)
+    # apply scaler only if exists
+    if scaler is not None:
+        sensors_array = scaler.transform(sensors_array)
 
-    # 🔹 Predict using trained model
-    prediction = model.predict(scaled_input)[0]
+    prediction = model.predict(sensors_array)[0]
 
     return {"predicted_RUL": float(round(prediction, 2))}
+
